@@ -8,7 +8,7 @@ import os
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 # Conexão com MongoDB
-MONGO_URI = os.getenv("MONGO_URI")  # Ex: "mongodb+srv://user:senha@cluster.mongodb.net"
+MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["make-a-question"]  # nome do banco
 collection = db["questions"]  # nome da coleção
