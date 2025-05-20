@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import google.generativeai as genai
 from pymongo import MongoClient
@@ -15,6 +16,15 @@ collection = db["questions"]  # nome da coleção
 
 # Inicializando o app FastAPI
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Você pode trocar "*" por um domínio específico depois
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Modelo de entrada (melhor que usar query param)
 class Pergunta(BaseModel):
