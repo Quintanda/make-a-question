@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from bson import ObjectId
 from pydantic import BaseModel
 import google.generativeai as genai
 from pymongo import MongoClient
@@ -54,3 +56,20 @@ def responder(pergunta: Pergunta):
     result = collection.insert_one(registro)
 
     return {"mensagem": "Resposta salva com sucesso!", "id": str(result.inserted_id)}
+
+# Função para converter documentos do Mongo (que tem ObjectId) para dict JSON serializável
+def doc_to_dict(doc):
+    return {
+        "id": str(doc["_id"]),
+        "pergunta": doc["pergunta"],
+        "resposta": doc["resposta"]
+    }
+
+@app.get("/respostas")
+def listar_respostas():
+    try:
+        documentos = collection.find().sort("_id", -1)  # pega tudo, do mais novo pro mais velho
+        resultados = [doc_to_dict(doc) for doc in documentos]
+        return JSONResponse(content=resultados)
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
